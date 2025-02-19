@@ -34,7 +34,9 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user)
-      return res.status(404).send({ message: "invalid email or password" });
+      return res
+        .status(404)
+        .send({ message: "User Not Found with this email Please Sign Up" });
     const isMatch = await bcrypt.compare(String(password), user.password);
     if (!isMatch) return res.status(400).send({ message: "Password is wrong" });
     const token = generateToke(user._id);
