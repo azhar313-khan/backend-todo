@@ -98,3 +98,25 @@ exports.updateProfie = async (req, res) => {
     res.status(404).send({ message: "server error", err });
   }
 };
+
+exports.profile = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).send({ message: "User not found" });
+    res.status(201).send({ message: "User profile", user });
+  } catch (err) {
+    console.log(err, "error");
+    res.status(404).send({ message: "server error", err });
+  }
+};
+
+exports.getAllUser = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(201).json({ message: "All signup user", users });
+  } catch (err) {
+    console.log(err, "error");
+    res.status(404).send({ message: "server error", err });
+  }
+};
