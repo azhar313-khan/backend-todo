@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
+const { signUpValidator, loginValidator } = require("../utils/validator");
 
 const generateToke = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
@@ -10,7 +11,15 @@ const generateToke = (userId) => {
 
 exports.signup = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    let { name, email, password } = req.body;
+    password = String(password);
+    const validator = signUpValidator({ name, email, password });
+    if (validator.error) {
+      return res
+        .status(400)
+        .json({ message: validator.error.details[0].message });
+    }
+
     const userExits = await User.findOne({ email });
     if (userExits)
       return res.status(400).json({ message: "User Email is already Exists" });
@@ -31,7 +40,14 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    password = String(password);
+    const validator = loginValidator({ email, password });
+    if (validator.error) {
+      return res
+        .status(400)
+        .json({ message: validator.error.details[0].message });
+    }
     const user = await User.findOne({ email });
     if (!user)
       return res
@@ -113,8 +129,30 @@ exports.profile = async (req, res) => {
 
 exports.getAllUser = async (req, res) => {
   try {
-    const users = await User.find();
-    res.status(201).json({ message: "All signup user", users });
+    const { search, page = 1, limit = 10 } = req.query;
+    let filter = {};
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ];
+    }
+    
+    const users = await User.find(filter)
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+
+    let totalUser = await User.aggregate([{ $count: "userCount" }]);
+    const totalPage = Math.ceil(totalUser[0].userCount / limit);
+
+    res.status(201).json({
+      message: "All signup user",
+      users,
+      totalUser: totalUser[0].userCount,
+      currentPage: Number(page),
+      totalPage,
+      pageSize: limit,
+    });
   } catch (err) {
     console.log(err, "error");
     res.status(404).send({ message: "server error", err });

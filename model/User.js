@@ -14,6 +14,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  status: {
+    type: String,
+    default: "active",
+  },
   created_at: {
     type: Date,
     default: Date.now,
@@ -21,4 +25,3 @@ const UserSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("User", UserSchema);
-

@@ -39,7 +39,11 @@ const swaggerDefinition = {
   servers: [
     {
       url: "http://localhost:3000",
-      description: "Development server",
+      description: "Local server url",
+    },
+    {
+      url: "https://backend-todo-1-uz9r.onrender.com",
+      description: "Live server url",
     },
   ],
 };
