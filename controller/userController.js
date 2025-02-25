@@ -129,7 +129,13 @@ exports.profile = async (req, res) => {
 
 exports.getAllUser = async (req, res) => {
   try {
-    const { search, page = 1, limit = 10 } = req.query;
+    const {
+      search,
+      sortBy = "created_at",
+      order = "desc",
+      page = 1,
+      limit = 10,
+    } = req.query;
     let filter = {};
     if (search) {
       filter.$or = [
@@ -137,21 +143,22 @@ exports.getAllUser = async (req, res) => {
         { email: { $regex: search, $options: "i" } },
       ];
     }
-    
+
     const users = await User.find(filter)
+      .sort({ [sortBy]: order === "desc" ? -1 : 1 })
       .skip((page - 1) * limit)
       .limit(Number(limit));
 
-    let totalUser = await User.aggregate([{ $count: "userCount" }]);
-    const totalPage = Math.ceil(totalUser[0].userCount / limit);
+    let totalUser = (await User.find(filter)).length;
+    const totalPage = Math.ceil(totalUser / limit);
 
     res.status(201).json({
       message: "All signup user",
-      users,
-      totalUser: totalUser[0].userCount,
+      totalUser: totalUser,
       currentPage: Number(page),
       totalPage,
-      pageSize: limit,
+      pageSize: Number(limit),
+      users,
     });
   } catch (err) {
     console.log(err, "error");
