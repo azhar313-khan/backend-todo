@@ -8,6 +8,7 @@ const {
   profile,
   getAllUser,
   updateUserStatus,
+  dashboradCount,
 } = require("../controller/userController");
 const {
   createTode,
@@ -296,6 +297,7 @@ router.get("/getAllUser", getAllUser);
  *         description: Server error.
  */
 router.put("/updateUserStatus/:id", updateUserStatus);
+router.get("/getCount", dashboradCount);
 
 //Todo Route
 router.post("/createTode", createTode);
@@ -303,5 +305,8 @@ router.get("/getTodos", getTodo);
 router.put("/updateTodos/:id", updateTodos);
 router.delete("/deleteTodo/:id", deleteTodo);
 router.get("/getTodoById/:id", getTodoById);
+
+//Image Upload
+// router.post("/uploadImage", uploadImage);
 
 module.exports = router;

@@ -185,3 +185,15 @@ exports.updateUserStatus = async (req, res) => {
     res.status(404).send({ message: "server error", err });
   }
 };
+
+exports.dashboradCount = async (req, res) => {
+  try {
+    const totalUser = await User.countDocuments();
+    const activeUserCount = await User.countDocuments({ status: "active" });
+    const inactiveUserCount = await User.countDocuments({ status: "inactive" });
+    res.status(201).json({ totalUser, activeUserCount, inactiveUserCount });
+  } catch (err) {
+    console.log(err, "error");
+    res.status(404).send({ message: "server error", err });
+  }
+};
