@@ -171,12 +171,130 @@ router.get("/getProfile", profile);
  * /getAllUser:
  *   get:
  *     summary: Get All Users
- *     description: Retrieves a list of all users.
+ *     description: Retrieves a paginated list of users with optional search and sorting.
+ *     parameters:
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search users by name or email.
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           default: "created_at"
+ *         description: Field to sort by (e.g., "name", "email", "created_at").
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: "desc"
+ *         description: Sort order (ascending or descending).
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of users per page.
  *     responses:
  *       200:
- *         description: A list of users.
+ *         description: A paginated list of users.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "All signup user"
+ *                 totalUser:
+ *                   type: integer
+ *                   example: 50
+ *                 currentPage:
+ *                   type: integer
+ *                   example: 1
+ *                 totalPage:
+ *                   type: integer
+ *                   example: 5
+ *                 pageSize:
+ *                   type: integer
+ *                   example: 10
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "60d21b4667d0d8992e610c85"
+ *                       name:
+ *                         type: string
+ *                         example: "John Doe"
+ *                       email:
+ *                         type: string
+ *                         example: "john@example.com"
+ *       404:
+ *         description: Server error.
  */
 router.get("/getAllUser", getAllUser);
+/**
+ * @swagger
+ * /updateUserStatus/{id}:
+ *   put:
+ *     summary: Update User Status
+ *     description: Updates the status of a user by their ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [active, inactive, banned]
+ *                 example: "active"
+ *     responses:
+ *       200:
+ *         description: User status updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User status updated successfully."
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "60d21b4667d0d8992e610c85"
+ *                     status:
+ *                       type: string
+ *                       example: "active"
+ *       400:
+ *         description: Invalid request or missing parameters.
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Server error.
+ */
 router.put("/updateUserStatus/:id", updateUserStatus);
 
 //Todo Route
