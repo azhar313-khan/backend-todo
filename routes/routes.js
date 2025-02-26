@@ -7,6 +7,7 @@ const {
   updateProfie,
   profile,
   getAllUser,
+  updateUserStatus,
 } = require("../controller/userController");
 const {
   createTode,
@@ -20,7 +21,7 @@ const {
  * @swagger
  * /:
  *   get:
- *     summary: Welcome API 
+ *     summary: Welcome API
  *     description: Returns a welcome message from the API.
  *     responses:
  *       200:
@@ -176,6 +177,7 @@ router.get("/getProfile", profile);
  *         description: A list of users.
  */
 router.get("/getAllUser", getAllUser);
+router.put("/updateUserStatus/:id", updateUserStatus);
 
 //Todo Route
 router.post("/createTode", createTode);

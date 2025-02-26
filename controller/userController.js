@@ -165,3 +165,23 @@ exports.getAllUser = async (req, res) => {
     res.status(404).send({ message: "server error", err });
   }
 };
+
+exports.updateUserStatus = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id);
+    user.status === "active" ? "inactive" : "active";
+    if (user.status === "active") {
+      user.status = "inactive";
+    } else if (user.status === "inactive") {
+      user.status = "active";
+    }
+
+    await user.save();
+    res.json({ message: "User Status Updated Successfully", user });
+
+    return user;
+  } catch (error) {
+    console.log(err, "error");
+    res.status(404).send({ message: "server error", err });
+  }
+};
