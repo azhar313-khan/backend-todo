@@ -3,7 +3,8 @@ const joi = require("joi");
 exports.signUpValidator = (data) => {
   const schema = joi.object({
     name: joi.string().min(3).max(20).required(),
-    password: Joi.string()
+    password: joi
+      .string()
       .min(6)
       .regex(/[A-Z]/, "uppercase letter")
       .regex(/[a-z]/, "lowercase letter")
@@ -23,7 +24,8 @@ exports.signUpValidator = (data) => {
 exports.loginValidator = (data) => {
   const schema = joi.object({
     email: joi.string().min(6).required().email(),
-    password: Joi.string()
+    password: joi
+      .string()
       .min(6)
       .regex(/[A-Z]/, "uppercase letter")
       .regex(/[a-z]/, "lowercase letter")
