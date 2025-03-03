@@ -191,7 +191,12 @@ exports.dashboradCount = async (req, res) => {
     const totalUser = await User.countDocuments();
     const activeUserCount = await User.countDocuments({ status: "active" });
     const inactiveUserCount = await User.countDocuments({ status: "inactive" });
-    res.status(201).json({ totalUser, activeUserCount, inactiveUserCount });
+    res.status(201).json({
+      message: "Get Count Successfully",
+      totalUser,
+      activeUserCount,
+      inactiveUserCount,
+    });
   } catch (err) {
     console.log(err, "error");
     res.status(404).send({ message: "server error", err });
