@@ -6,7 +6,8 @@ const nodemailer = require("nodemailer");
 const { signUpValidator, loginValidator } = require("../utils/validator");
 
 const generateToke = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  console.log(userId);
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "6h" });
 };
 
 exports.signup = async (req, res) => {

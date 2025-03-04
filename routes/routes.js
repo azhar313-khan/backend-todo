@@ -19,6 +19,7 @@ const {
 } = require("../controller/todoController");
 var multer = require("multer");
 const path = require("path");
+const { varifyToken } = require("../utils/authMiddleware");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -42,7 +43,7 @@ const upload = multer({ storage: storage });
  *       200:
  *         description: Successful response with a welcome message.
  */
-router.get("/", function (req, res) {
+router.get("/", varifyToken, function (req, res) {
   res.send("Hello from the API");
 });
 
@@ -165,7 +166,12 @@ router.post("/forgetPassword", forgetPassword);
  *         description: Profile updated successfully.
  */
 
-router.put("/updateProfile/:id", upload.single("profileImage"), updateProfie);
+router.put(
+  "/updateProfile/:id",
+  varifyToken,
+  upload.single("profileImage"),
+  updateProfie
+);
 
 //Profile API
 /**
@@ -178,7 +184,7 @@ router.put("/updateProfile/:id", upload.single("profileImage"), updateProfie);
  *       200:
  *         description: User profile retrieved successfully.
  */
-router.get("/getProfile", profile);
+router.get("/getProfile", varifyToken, profile);
 
 //Get All User API
 /**
@@ -258,7 +264,7 @@ router.get("/getProfile", profile);
  *       404:
  *         description: Server error.
  */
-router.get("/getAllUser", getAllUser);
+router.get("/getAllUser", varifyToken, getAllUser);
 /**
  * @swagger
  * /updateUserStatus/{id}:
@@ -310,8 +316,8 @@ router.get("/getAllUser", getAllUser);
  *       500:
  *         description: Server error.
  */
-router.put("/updateUserStatus/:id", updateUserStatus);
-router.get("/getCount", dashboradCount);
+router.put("/updateUserStatus/:id", varifyToken, updateUserStatus);
+router.get("/getCount", varifyToken, dashboradCount);
 
 //Todo Route
 router.post("/createTode", createTode);
