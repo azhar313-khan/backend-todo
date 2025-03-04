@@ -123,8 +123,9 @@ exports.updateProfie = async (req, res) => {
 
 exports.profile = async (req, res) => {
   try {
-    const { email } = req.body;
-    const user = await User.findOne({ email });
+    console.log(req.userId, "req.userId");
+
+    const user = await User.findById(req.userId);
     if (!user) return res.status(404).send({ message: "User not found" });
     res.status(201).send({ message: "User profile", user });
   } catch (err) {

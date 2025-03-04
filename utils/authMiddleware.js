@@ -1,19 +1,16 @@
 const jwt = require("jsonwebtoken");
-console.log(process.env.JWT_SECRET, "test");
 exports.varifyToken = (req, res, next) => {
   let token = req.header("Authorization");
-
   if (!token)
     return res.status(401).json({ error: "Access denied,token missing" });
   if (token.startsWith("Bearer ")) {
     token = token.split(" ")[1];
   }
-  console.log(token, "test");
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded);
-    req.userId = decoded.userId;
+    console.log(decoded.id, "decomde");
+    req.userId = decoded.id;
     next();
   } catch (err) {
     if (err.name === "TokenExpiredError") {
