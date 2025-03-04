@@ -14,9 +14,18 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  phone: {
+    type: String,
+    required: false,
+    default: "",
+  },
   status: {
     type: String,
     default: "active",
+  },
+  profileImage: {
+    type: String,
+    default: null,
   },
   role: {
     type: String,

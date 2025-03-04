@@ -96,12 +96,17 @@ exports.forgetPassword = async (req, res) => {
 
 exports.updateProfie = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, phone, status } = req.body;
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).send({ message: "User not found" });
     user.name = name || user.name;
     user.email = email || user.email;
-
+    user.phone = phone || user.phone;
+    user.status = status || user.status;
+    if (req.file.filename) {
+      console.log(req.file.filename);
+      user.profileImage = `/uploads/${req.file.filename}`;
+    }
     if (password) {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(String(password), salt);
@@ -180,7 +185,7 @@ exports.updateUserStatus = async (req, res) => {
     res.json({ message: "User Status Updated Successfully", user });
 
     return user;
-  } catch (error) {
+  } catch (err) {
     console.log(err, "error");
     res.status(404).send({ message: "server error", err });
   }

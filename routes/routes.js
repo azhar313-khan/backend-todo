@@ -17,6 +17,20 @@ const {
   deleteTodo,
   getTodoById,
 } = require("../controller/todoController");
+var multer = require("multer");
+const path = require("path");
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads");
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname); // Get file extension
+    cb(null, file.fieldname + "-" + Date.now() + ext);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 /**
  * @swagger
@@ -151,7 +165,7 @@ router.post("/forgetPassword", forgetPassword);
  *         description: Profile updated successfully.
  */
 
-router.put("/updateProfile/:id", updateProfie);
+router.put("/updateProfile/:id", upload.single("profileImage"), updateProfie);
 
 //Profile API
 /**

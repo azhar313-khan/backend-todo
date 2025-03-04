@@ -7,14 +7,17 @@ const router = require("./routes/routes");
 const cors = require("cors");
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const path = require("path");
 
 // Connect to MongoDB
 connectDB();
 dotenv.config();
 
 //Middleware
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(cors());
 app.use(express.json());
+
 //routes
 app.use("/", router);
 

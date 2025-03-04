@@ -18,6 +18,7 @@ exports.signUpValidator = (data) => {
       }),
     email: joi.string().min(6).required().email(),
   });
+  
   return schema.validate(data);
 };
 
