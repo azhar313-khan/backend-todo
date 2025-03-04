@@ -3,7 +3,8 @@ console.log(process.env.JWT_SECRET, "test");
 exports.varifyToken = (req, res, next) => {
   let token = req.header("Authorization");
 
-  if (!token) return res.status(401).json({ error: "Access denied" });
+  if (!token)
+    return res.status(401).json({ error: "Access denied,token missing" });
   if (token.startsWith("Bearer ")) {
     token = token.split(" ")[1];
   }
