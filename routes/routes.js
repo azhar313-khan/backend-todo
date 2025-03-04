@@ -317,7 +317,96 @@ router.get("/getAllUser", varifyToken, getAllUser);
  *         description: Server error.
  */
 router.put("/updateUserStatus/:id", varifyToken, updateUserStatus);
+/**
+ * @swagger
+ * /updateUserStatus/{id}:
+ *   put:
+ *     summary: Update User Status
+ *     description: Updates the status of a user by their ID. Requires authentication.
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [active, inactive, banned]
+ *                 example: "active"
+ *     responses:
+ *       200:
+ *         description: User status updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User status updated successfully."
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "60d21b4667d0d8992e610c85"
+ *                     status:
+ *                       type: string
+ *                       example: "active"
+ *       400:
+ *         description: Invalid request or missing parameters.
+ *       401:
+ *         description: Unauthorized access (invalid token).
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Server error.
+ */
+
 router.get("/getCount", varifyToken, dashboradCount);
+/**
+ * @swagger
+ * /getCount:
+ *   get:
+ *     summary: Get User Counts
+ *     description: Retrieves total, active, and inactive user counts. Requires authentication.
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved user counts.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User count fetched successfully"
+ *                 totalUser:
+ *                   type: integer
+ *                   example: 100
+ *                 activeUserCount:
+ *                   type: integer
+ *                   example: 75
+ *                 inactiveUserCount:
+ *                   type: integer
+ *                   example: 25
+ *       401:
+ *         description: Unauthorized access (invalid token).
+ *       500:
+ *         description: Server error.
+ */
 
 //Todo Route
 router.post("/createTode", createTode);

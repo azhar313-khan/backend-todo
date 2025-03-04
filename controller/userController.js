@@ -7,7 +7,7 @@ const { signUpValidator, loginValidator } = require("../utils/validator");
 
 const generateToke = (userId) => {
   console.log(userId);
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "6h" });
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "10m" });
 };
 
 exports.signup = async (req, res) => {
