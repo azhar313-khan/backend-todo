@@ -105,7 +105,7 @@ exports.updateProfie = async (req, res) => {
     user.email = email || user.email;
     user.phone = phone || user.phone;
     user.status = status || user.status;
-    if (req.file.filename) {
+    if (req.file && req.file.filename) {
       console.log(req.file.filename);
       user.profileImage = `/uploads/${req.file.filename}`;
     }
