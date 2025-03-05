@@ -7,7 +7,7 @@ const { signUpValidator, loginValidator } = require("../utils/validator");
 
 const generateToke = (userId) => {
   console.log(userId);
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "10m" });
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
 
 exports.signup = async (req, res) => {
@@ -98,7 +98,8 @@ exports.forgetPassword = async (req, res) => {
 exports.updateProfie = async (req, res) => {
   try {
     const { name, email, password, phone, status } = req.body;
-    const user = await User.findById(req.params.id);
+    console.log(req.userId, "i");
+    const user = await User.findById(req.userId);
     if (!user) return res.status(404).send({ message: "User not found" });
     user.name = name || user.name;
     user.email = email || user.email;
@@ -123,8 +124,6 @@ exports.updateProfie = async (req, res) => {
 
 exports.profile = async (req, res) => {
   try {
-    console.log(req.userId, "req.userId");
-
     const user = await User.findById(req.userId);
     if (!user) return res.status(404).send({ message: "User not found" });
     res.status(201).send({ message: "User profile", user });
@@ -175,7 +174,7 @@ exports.getAllUser = async (req, res) => {
 
 exports.updateUserStatus = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id);
+    const user = await User.findByIdAndUpdate(req.userId);
     user.status === "active" ? "inactive" : "active";
     if (user.status === "active") {
       user.status = "inactive";

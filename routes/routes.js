@@ -37,196 +37,296 @@ const upload = multer({ storage: storage });
  * @swagger
  * /:
  *   get:
- *     summary: Welcome API
- *     description: Returns a welcome message from the API.
+ *     summary: Test API Route
+ *     description: Returns a simple "Hello from the API" message. Requires authentication.
+ *     security:
+ *       - BearerAuth: []  # Requires JWT authentication
  *     responses:
  *       200:
- *         description: Successful response with a welcome message.
+ *         description: Successful response with a greeting message.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: "Hello from the API"
+ *       401:
+ *         description: Unauthorized - Missing or invalid token.
  */
 router.get("/", varifyToken, function (req, res) {
   res.send("Hello from the API");
 });
-
 /**
  * @swagger
  * /:
  *   post:
- *     summary: Example Post Route
- *     description: This is an example POST request.
+ *     summary: Test API Endpoint
+ *     description: Returns a simple hello message.
+ *     security:
+ *       - bearerAuth: []  # Requires JWT authentication
  *     responses:
  *       200:
- *         description: Successful response.
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Hello from the API"
  */
-router.post("/", function (req, res) {
-  res.send("Hello from the API");
+router.post("/", varifyToken, function (req, res) {
+  res.json({ message: "Hello from the API" });
 });
-
-//Signup API
-
 /**
  * @swagger
  * /signup:
  *   post:
- *     summary: User Signup
- *     description: Creates a new user account.
+ *     summary: Register a new user
+ *     description: Creates a new user account with name, email, and password.
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
  *             properties:
  *               name:
  *                 type: string
+ *                 example: "John Doe"
  *               email:
  *                 type: string
+ *                 example: "johndoe@example.com"
  *               password:
  *                 type: string
+ *                 format: password
+ *                 example: "securepassword123"
  *     responses:
  *       201:
- *         description: User created successfully.
+ *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User registered successfully"
+ *       400:
+ *         description: Bad request (missing fields or invalid data)
+ *       500:
+ *         description: Internal server error
  */
 router.post("/signup", signup);
 
-//Login API
 /**
  * @swagger
  * /login:
  *   post:
- *     summary: User Login
- *     description: Authenticates a user and returns a token.
+ *     summary: User login
+ *     description: Authenticates a user and returns a JWT token.
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - email
+ *               - password
  *             properties:
  *               email:
  *                 type: string
+ *                 example: "johndoe@example.com"
  *               password:
  *                 type: string
+ *                 format: password
+ *                 example: "securepassword123"
  *     responses:
  *       200:
- *         description: Login successful.
- *       401:
- *         description: Unauthorized - Invalid credentials.
+ *         description: User authenticated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR..."
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "65dfad7b79bfb"
+ *                     email:
+ *                       type: string
+ *                       example: "johndoe@example.com"
+ *       400:
+ *         description: Invalid email or password
+ *       500:
+ *         description: Internal server error
  */
 router.post("/login", login);
 
-//Forget Password API
-/**
- * @swagger
- * /forgetPassword:
- *   post:
- *     summary: Forgot Password
- *     description: Sends a reset link to the user's email.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *     responses:
- *       200:
- *         description: Password reset email sent.
- */
-
 router.post("/forgetPassword", forgetPassword);
 
-//Update Profile API
 /**
  * @swagger
- * /updateProfile/{id}:
+ * /updateProfile:
  *   put:
  *     summary: Update User Profile
  *     description: Updates a user's profile information.
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         schema:
- *           type: string
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
  *               name:
  *                 type: string
+ *                 description: User's full name
  *               email:
  *                 type: string
+ *                 format: email
+ *                 description: User's email address
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 description: User's new password (optional)
+ *               phone:
+ *                 type: string
+ *                 description: User's phone number
+ *               status:
+ *                 type: string
+ *                 description: User's account status (e.g., active/inactive)
+ *               profileImage:
+ *                 type: string
+ *                 format: binary
+ *                 description: Profile image file
  *     responses:
  *       200:
  *         description: Profile updated successfully.
+ *       400:
+ *         description: Bad request - Validation errors
+ *       401:
+ *         description: Unauthorized - No token provided
+ *       403:
+ *         description: Forbidden - Invalid token
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
  */
-
 router.put(
-  "/updateProfile/:id",
+  "/updateProfile",
   varifyToken,
   upload.single("profileImage"),
   updateProfie
 );
-
-//Profile API
 /**
  * @swagger
  * /getProfile:
  *   get:
  *     summary: Get User Profile
- *     description: Retrieves the profile of the authenticated user.
+ *     description: Retrieves the profile information of the logged-in user.
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: User profile retrieved successfully.
+ *         description: Successfully retrieved user profile.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User profile"
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "60f6c2b7e6f6f7b2b8e7b9c3"
+ *                     name:
+ *                       type: string
+ *                       example: "John Doe"
+ *                     email:
+ *                       type: string
+ *                       format: email
+ *                       example: "john@example.com"
+ *                     phone:
+ *                       type: string
+ *                       example: "+1234567890"
+ *                     status:
+ *                       type: string
+ *                       example: "active"
+ *                     profileImage:
+ *                       type: string
+ *                       example: "/uploads/profile.jpg"
+ *       401:
+ *         description: Unauthorized - No token provided
+ *       403:
+ *         description: Forbidden - Invalid token
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
  */
+
 router.get("/getProfile", varifyToken, profile);
 
-//Get All User API
 /**
  * @swagger
  * /getAllUser:
  *   get:
  *     summary: Get All Users
- *     description: Retrieves a paginated list of users with optional search and sorting.
+ *     description: Retrieves a list of all users with pagination, sorting, and search functionality.
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: query
  *         name: search
  *         schema:
  *           type: string
- *         description: Search users by name or email.
+ *         description: Search users by name or email (case-insensitive)
  *       - in: query
  *         name: sortBy
  *         schema:
  *           type: string
- *           default: "created_at"
- *         description: Field to sort by (e.g., "name", "email", "created_at").
+ *           enum: [name, email, created_at]
+ *           default: created_at
+ *         description: Sort results by a specific field
  *       - in: query
  *         name: order
  *         schema:
  *           type: string
  *           enum: [asc, desc]
- *           default: "desc"
- *         description: Sort order (ascending or descending).
+ *           default: desc
+ *         description: Sort order (ascending or descending)
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
  *           default: 1
- *         description: Page number for pagination.
+ *         description: Page number for pagination
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           default: 10
- *         description: Number of users per page.
+ *         description: Number of users per page
  *     responses:
  *       200:
- *         description: A paginated list of users.
+ *         description: Successfully retrieved users.
  *         content:
  *           application/json:
  *             schema:
@@ -254,137 +354,84 @@ router.get("/getProfile", varifyToken, profile);
  *                     properties:
  *                       _id:
  *                         type: string
- *                         example: "60d21b4667d0d8992e610c85"
+ *                         example: "60f6c2b7e6f6f7b2b8e7b9c3"
  *                       name:
  *                         type: string
  *                         example: "John Doe"
  *                       email:
  *                         type: string
+ *                         format: email
  *                         example: "john@example.com"
- *       404:
- *         description: Server error.
- */
-router.get("/getAllUser", varifyToken, getAllUser);
-/**
- * @swagger
- * /updateUserStatus/{id}:
- *   put:
- *     summary: Update User Status
- *     description: Updates the status of a user by their ID.
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The user ID.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               status:
- *                 type: string
- *                 enum: [active, inactive, banned]
- *                 example: "active"
- *     responses:
- *       200:
- *         description: User status updated successfully.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "User status updated successfully."
- *                 user:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                       example: "60d21b4667d0d8992e610c85"
- *                     status:
- *                       type: string
- *                       example: "active"
- *       400:
- *         description: Invalid request or missing parameters.
- *       404:
- *         description: User not found.
- *       500:
- *         description: Server error.
- */
-router.put("/updateUserStatus/:id", varifyToken, updateUserStatus);
-/**
- * @swagger
- * /updateUserStatus/{id}:
- *   put:
- *     summary: Update User Status
- *     description: Updates the status of a user by their ID. Requires authentication.
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The user ID.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               status:
- *                 type: string
- *                 enum: [active, inactive, banned]
- *                 example: "active"
- *     responses:
- *       200:
- *         description: User status updated successfully.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "User status updated successfully."
- *                 user:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                       example: "60d21b4667d0d8992e610c85"
- *                     status:
- *                       type: string
- *                       example: "active"
- *       400:
- *         description: Invalid request or missing parameters.
+ *                       phone:
+ *                         type: string
+ *                         example: "+1234567890"
+ *                       status:
+ *                         type: string
+ *                         example: "active"
+ *                       profileImage:
+ *                         type: string
+ *                         example: "/uploads/profile.jpg"
  *       401:
- *         description: Unauthorized access (invalid token).
- *       404:
- *         description: User not found.
+ *         description: Unauthorized - No token provided
+ *       403:
+ *         description: Forbidden - Invalid token
  *       500:
- *         description: Server error.
+ *         description: Server error
  */
 
-router.get("/getCount", varifyToken, dashboradCount);
+router.get("/getAllUser", varifyToken, getAllUser);
+
+/**
+ * @swagger
+ * /updateUserStatus:
+ *   put:
+ *     summary: Update User Status
+ *     description: Toggles the user's status between "active" and "inactive".
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User status updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User Status Updated Successfully"
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "60f6c2b7e6f6f7b2b8e7b9c3"
+ *                     status:
+ *                       type: string
+ *                       example: "active"
+ *       401:
+ *         description: Unauthorized - No token provided
+ *       403:
+ *         description: Forbidden - Invalid token
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+
+router.put("/updateUserStatus", varifyToken, updateUserStatus);
+
 /**
  * @swagger
  * /getCount:
  *   get:
- *     summary: Get User Counts
- *     description: Retrieves total, active, and inactive user counts. Requires authentication.
+ *     summary: Get User Count Statistics
+ *     description: Retrieves the total number of users, active users, and inactive users.
  *     security:
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: Successfully retrieved user counts.
+ *         description: Successfully retrieved user count statistics.
  *         content:
  *           application/json:
  *             schema:
@@ -392,7 +439,7 @@ router.get("/getCount", varifyToken, dashboradCount);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "User count fetched successfully"
+ *                   example: "Get Count Successfully"
  *                 totalUser:
  *                   type: integer
  *                   example: 100
@@ -403,10 +450,14 @@ router.get("/getCount", varifyToken, dashboradCount);
  *                   type: integer
  *                   example: 25
  *       401:
- *         description: Unauthorized access (invalid token).
+ *         description: Unauthorized - No token provided
+ *       403:
+ *         description: Forbidden - Invalid token
  *       500:
- *         description: Server error.
+ *         description: Server error
  */
+
+router.get("/getCount", varifyToken, dashboradCount);
 
 //Todo Route
 router.post("/createTode", createTode);

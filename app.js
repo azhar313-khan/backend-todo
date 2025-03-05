@@ -21,10 +21,8 @@ app.use(express.json());
 //routes
 app.use("/", router);
 
-// Swagger configuration
 const swaggerDefinition = {
   openapi: "3.0.0",
-
   info: {
     title: "Express API for JSONPlaceholder",
     version: "1.0.0",
@@ -42,23 +40,35 @@ const swaggerDefinition = {
   servers: [
     {
       url: "http://localhost:3000",
-      description: "Local server url",
+      description: "Local server",
     },
     {
       url: "https://backend-todo-1-uz9r.onrender.com",
-      description: "Live server url",
+      description: "Live server",
+    },
+  ],
+  components: {
+    securitySchemes: {
+      BearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+      },
+    },
+  },
+  security: [
+    {
+      BearerAuth: [],
     },
   ],
 };
 
 const options = {
   swaggerDefinition,
-  // Paths to files containing OpenAPI definitions
-  apis: ["./routes/*.js"],
+  apis: ["./routes/*.js"], // Ensure your route files are included
 };
 
 const swaggerSpec = swaggerJSDoc(options);
-
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.listen(PORT, () => {
