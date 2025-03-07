@@ -32,7 +32,11 @@ exports.signup = async (req, res) => {
       email,
       password: hash,
     });
-    res.status(201).json({ message: "User Registration Successful", user });
+    const token = generateToke(user._id);
+
+    res
+      .status(201)
+      .json({ message: "User Registration Successful", user, token });
   } catch (err) {
     console.log(err, "error");
     res.status(404).send({ message: "server error", err });
