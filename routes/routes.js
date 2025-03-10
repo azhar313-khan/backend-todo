@@ -420,7 +420,7 @@ router.get("/getAllUser", varifyToken, getAllUser);
  *         description: Server error
  */
 
-router.put("/updateUserStatus", varifyToken, updateUserStatus);
+router.put("/updateUserStatus/:userId", varifyToken, updateUserStatus);
 
 /**
  * @swagger

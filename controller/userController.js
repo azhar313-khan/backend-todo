@@ -182,7 +182,8 @@ exports.getAllUser = async (req, res) => {
 
 exports.updateUserStatus = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.userId);
+    // const user = await User.findByIdAndUpdate(req.userId);
+    const user = await User.findById(req.params.userId);
     user.status === "active" ? "inactive" : "active";
     if (user.status === "active") {
       user.status = "inactive";
