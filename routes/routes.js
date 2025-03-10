@@ -9,6 +9,7 @@ const {
   getAllUser,
   updateUserStatus,
   dashboradCount,
+  changePassword,
 } = require("../controller/userController");
 const {
   createTode,
@@ -458,6 +459,7 @@ router.put("/updateUserStatus", varifyToken, updateUserStatus);
  */
 
 router.get("/getCount", varifyToken, dashboradCount);
+router.put("/changePassword", varifyToken, changePassword);
 
 //Todo Route
 router.post("/createTode", createTode);
