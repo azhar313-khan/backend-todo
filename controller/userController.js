@@ -122,6 +122,7 @@ exports.updateProfie = async (req, res) => {
       const hash = await bcrypt.hash(String(password), salt);
       user.password = hash;
     }
+
     await user.save();
     res.json({ message: "User profile updated", user });
   } catch (err) {

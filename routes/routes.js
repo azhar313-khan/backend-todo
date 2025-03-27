@@ -21,6 +21,11 @@ const {
 var multer = require("multer");
 const path = require("path");
 const { varifyToken } = require("../utils/authMiddleware");
+const {
+  createProject,
+  getProject,
+  updateProject,
+} = require("../controller/projectController");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -460,6 +465,11 @@ router.put("/updateUserStatus/:userId", varifyToken, updateUserStatus);
 
 router.get("/getCount", varifyToken, dashboradCount);
 router.put("/changePassword", varifyToken, changePassword);
+
+//Project API
+router.post("/createProject", varifyToken, createProject);
+router.put("/updateProject/:id", varifyToken, updateProject);
+router.get("/getProject", varifyToken, getProject);
 
 //Todo Route
 router.post("/createTode", createTode);
