@@ -25,6 +25,8 @@ const {
   createProject,
   getProject,
   updateProject,
+  deleteProject,
+  getProjectById,
 } = require("../controller/projectController");
 
 const storage = multer.diskStorage({
@@ -464,12 +466,127 @@ router.put("/updateUserStatus/:userId", varifyToken, updateUserStatus);
  */
 
 router.get("/getCount", varifyToken, dashboradCount);
+/**
+ * @swagger
+ * /changePassword:
+ *   put:
+ *     summary: Change user password
+ *     description: Allows an authenticated user to change their password.
+ *     tags:
+ *       - Authentication
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 example: "oldPass123"
+ *               newPassword:
+ *                 type: string
+ *                 example: "newPass456"
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *       400:
+ *         description: Incorrect old password or invalid new password
+ *       401:
+ *         description: Unauthorized. Please log in.
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+
 router.put("/changePassword", varifyToken, changePassword);
 
 //Project API
+/**
+ * @swagger
+ * /createProject:
+ *   post:
+ *     summary: Create a new project
+ *     description: Allows an authenticated user to create a new project.
+ *     tags:
+ *       - Project
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "My New Project"
+ *               description:
+ *                 type: string
+ *                 example: "This is a test project description"
+ *     responses:
+ *       201:
+ *         description: Project created successfully
+ *       400:
+ *         description: Bad request, missing required fields
+ *       401:
+ *         description: Unauthorized, token missing or invalid
+ *       500:
+ *         description: Server error
+ */
+
 router.post("/createProject", varifyToken, createProject);
+/**
+ * @swagger
+ * /updateProject/{id}:
+ *   put:
+ *     summary: Update an existing project
+ *     description: Allows an authenticated user to update a project by its ID.
+ *     tags:
+ *       - Project
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the project to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Updated Project Name"
+ *               description:
+ *                 type: string
+ *                 example: "Updated project description"
+ *     responses:
+ *       200:
+ *         description: Project updated successfully
+ *       400:
+ *         description: Bad request, missing required fields
+ *       401:
+ *         description: Unauthorized, token missing or invalid
+ *       404:
+ *         description: Project not found
+ *       500:
+ *         description: Server error
+ */
+
 router.put("/updateProject/:id", varifyToken, updateProject);
 router.get("/getProject", varifyToken, getProject);
+router.delete("/deleteProject/:id", varifyToken, deleteProject);
+router.get("/getProjectById", varifyToken, getProjectById);
 
 //Todo Route
 router.post("/createTode", createTode);
