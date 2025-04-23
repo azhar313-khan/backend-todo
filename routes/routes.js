@@ -586,7 +586,7 @@ router.post("/createProject", varifyToken, createProject);
 router.put("/updateProject/:id", varifyToken, updateProject);
 router.get("/getProject", varifyToken, getProject);
 router.delete("/deleteProject/:id", varifyToken, deleteProject);
-router.get("/getProjectById", varifyToken, getProjectById);
+router.get("/getProjectById/:id", varifyToken, getProjectById);
 
 //Todo Route
 router.post("/createTode", createTode);
